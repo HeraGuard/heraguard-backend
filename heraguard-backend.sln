@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heraguard.Domain", "heraguard.Domain\heraguard.Domain.csproj", "{12E89975-CD1A-4E62-95A2-7F4AB9F18A5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heraguard.Application", "heraguard.Application\heraguard.Application.csproj", "{5E58ADD1-5E42-4416-B415-9D51452438CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heraguard.Infrastructure", "heraguard.Infrastructure\heraguard.Infrastructure.csproj", "{744EC3D5-5BFC-4B5D-909E-088B4D01BE53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heraguard.API", "heraguard.API\heraguard.API.csproj", "{65031A2B-F53F-441D-9B2F-1E4C3419FC4F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12E89975-CD1A-4E62-95A2-7F4AB9F18A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12E89975-CD1A-4E62-95A2-7F4AB9F18A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12E89975-CD1A-4E62-95A2-7F4AB9F18A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12E89975-CD1A-4E62-95A2-7F4AB9F18A5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E58ADD1-5E42-4416-B415-9D51452438CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E58ADD1-5E42-4416-B415-9D51452438CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E58ADD1-5E42-4416-B415-9D51452438CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E58ADD1-5E42-4416-B415-9D51452438CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{744EC3D5-5BFC-4B5D-909E-088B4D01BE53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{744EC3D5-5BFC-4B5D-909E-088B4D01BE53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{744EC3D5-5BFC-4B5D-909E-088B4D01BE53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{744EC3D5-5BFC-4B5D-909E-088B4D01BE53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65031A2B-F53F-441D-9B2F-1E4C3419FC4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65031A2B-F53F-441D-9B2F-1E4C3419FC4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65031A2B-F53F-441D-9B2F-1E4C3419FC4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65031A2B-F53F-441D-9B2F-1E4C3419FC4F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

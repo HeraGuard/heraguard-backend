@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\heraguard.Application\heraguard.Application.csproj" />
+    <ProjectReference Include="..\heraguard.Domain\heraguard.Domain.csproj" />
+    <ProjectReference Include="..\heraguard.Infrastructure\heraguard.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
