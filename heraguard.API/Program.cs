@@ -1,41 +1,64 @@
+using heraguard.Application.Mapping;
+using heraguard.Infrastructure.Data;
+using heraguard.Infrastructure.Repositories;
+using heraguard.Application.Auth.Interfaces;
+using heraguard.Application.Auth.Services;
+using Microsoft.EntityFrameworkCore;
+using MediatR;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Controladores
+builder.Services.AddControllers();
+
+// Swagger/OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+
+// MediatR
+builder.Services.AddMediatR(cfg => 
+    cfg.RegisterServicesFromAssembly(typeof(heraguard.Application.Auth.Commands.LoginCommand).Assembly));
+
+// DbContext
+builder.Services.AddDbContext<HeraGuardDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("HeraGuardConnection")));
+
+// Cliente Supabase
+builder.Services.AddScoped(provider => 
+    new Supabase.Client(
+        builder.Configuration["Supabase:Url"] ?? throw new InvalidOperationException("Supabase URL not configured"),
+        builder.Configuration["Supabase:AnonKey"] ?? throw new InvalidOperationException("Supabase AnonKey not configured")
+    ));
+
+// Repositorios
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.UseCors("AllowAll");
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
