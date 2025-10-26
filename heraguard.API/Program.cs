@@ -1,10 +1,12 @@
+using heraguard.API.Middleware;
+using heraguard.Application.Auth.Commands;
+using heraguard.Application.Auth.Interfaces;
+using heraguard.Application.Auth.Services;
 using heraguard.Application.Mapping;
 using heraguard.Infrastructure.Data;
 using heraguard.Infrastructure.Repositories;
-using heraguard.Application.Auth.Interfaces;
-using heraguard.Application.Auth.Services;
 using Microsoft.EntityFrameworkCore;
-using MediatR;
+using Supabase;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,18 +21,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
 
 // MediatR
-builder.Services.AddMediatR(cfg => 
-    cfg.RegisterServicesFromAssembly(typeof(heraguard.Application.Auth.Commands.LoginCommand).Assembly));
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
 
 // DbContext
 builder.Services.AddDbContext<HeraGuardDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("HeraGuardConnection")));
 
 // Cliente Supabase
-builder.Services.AddScoped(provider => 
-    new Supabase.Client(
+builder.Services.AddScoped(provider =>
+    new Client(
         builder.Configuration["Supabase:Url"] ?? throw new InvalidOperationException("Supabase URL not configured"),
-        builder.Configuration["Supabase:AnonKey"] ?? throw new InvalidOperationException("Supabase AnonKey not configured")
+        builder.Configuration["Supabase:AnonKey"] ??
+        throw new InvalidOperationException("Supabase AnonKey not configured")
     ));
 
 // Repositorios
@@ -57,6 +60,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
