@@ -9,7 +9,7 @@ public class AuthRepository : IAuthRepository
 {
     private readonly HeraGuardDbContext _context;
 
-    public AuthRepository( HeraGuardDbContext context)
+    public AuthRepository(HeraGuardDbContext context)
     {
         _context = context;
     }
@@ -20,7 +20,7 @@ public class AuthRepository : IAuthRepository
             .Include(u => u.Role)
             .FirstOrDefaultAsync(u => u.Email == email);
     }
-    
+
     public async Task<User> CreateUserAsync(User user)
     {
         await _context.Users.AddAsync(user);

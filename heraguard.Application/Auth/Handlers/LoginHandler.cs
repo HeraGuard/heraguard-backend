@@ -1,11 +1,12 @@
 using heraguard.Application.Auth.Commands;
 using heraguard.Application.Auth.Dtos;
 using heraguard.Application.Auth.Interfaces;
+using heraguard.Domain.Common;
 using MediatR;
 
 namespace heraguard.Application.Auth.Handlers;
 
-public class LoginHandler : IRequestHandler<LoginCommand, AuthResponseDto>
+public class LoginHandler : IRequestHandler<LoginCommand, Result<AuthResponseDto>>
 {
     private readonly IAuthService _authService;
 
@@ -14,13 +15,8 @@ public class LoginHandler : IRequestHandler<LoginCommand, AuthResponseDto>
         _authService = authService;
     }
 
-    public async Task<AuthResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var result = await _authService.LoginAsync(request.Email, request.Password);
-
-        if (result == null)
-            throw new UnauthorizedAccessException("Credenciales inválidas");
-
-        return result;
+        return await _authService.LoginAsync(request.Email, request.Password);
     }
 }
