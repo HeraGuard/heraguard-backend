@@ -14,8 +14,9 @@ public class HeraGuardDbContext : DbContext
     public DbSet<AdultoMayorProfile> AdultosMayores => Set<AdultoMayorProfile>();
     public DbSet<FamiliarProfile> Familiares => Set<FamiliarProfile>();
     public DbSet<DoctorProfile> Doctores => Set<DoctorProfile>();
-    
+
     public DbSet<Medication> Medications => Set<Medication>();
+    public DbSet<Activity> Activities => Set<Activity>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,5 +55,8 @@ public class HeraGuardDbContext : DbContext
 
         modelBuilder.Entity<Medication>()
             .HasKey(m => m.MedicationId);
+
+        modelBuilder.Entity<Activity>()
+            .HasKey(a => a.ActivityId);
     }
 }

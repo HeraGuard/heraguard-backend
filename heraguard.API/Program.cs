@@ -43,6 +43,7 @@ builder.Services.AddScoped(provider =>
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 
 
 // CORS
