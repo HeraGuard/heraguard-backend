@@ -15,6 +15,8 @@ public class HeraGuardDbContext : DbContext
     public DbSet<FamiliarProfile> Familiares => Set<FamiliarProfile>();
     public DbSet<DoctorProfile> Doctores => Set<DoctorProfile>();
     
+    public DbSet<Medication> Medications => Set<Medication>();
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //PK
@@ -49,5 +51,8 @@ public class HeraGuardDbContext : DbContext
             .HasOne(u => u.DoctorProfile)
             .WithOne(p => p.User)
             .HasForeignKey<DoctorProfile>(p => p.UserId);
+
+        modelBuilder.Entity<Medication>()
+            .HasKey(m => m.MedicationId);
     }
 }
