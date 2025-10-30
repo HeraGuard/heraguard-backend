@@ -3,6 +3,7 @@ using heraguard.Application.Auth.Commands;
 using heraguard.Application.Auth.Interfaces;
 using heraguard.Application.Auth.Services;
 using heraguard.Application.Mapping;
+using heraguard.Application.Medications.Interfaces;
 using heraguard.Infrastructure.Data;
 using heraguard.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,12 @@ builder.Services.AddSwaggerGen();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(MedicationProfile).Assembly);
 
 // MediatR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(LoginCommand).Assembly));
+
 
 // DbContext
 builder.Services.AddDbContext<HeraGuardDbContext>(options =>
@@ -39,6 +42,8 @@ builder.Services.AddScoped(provider =>
 // Repositorios
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
+
 
 // CORS
 builder.Services.AddCors(options =>
