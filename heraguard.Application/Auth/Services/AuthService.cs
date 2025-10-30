@@ -98,9 +98,9 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<Result> LogoutAsync()
+    public Task<Result> LogoutAsync()
     {
-        return Result.Success();
+        return Task.FromResult(Result.Success());
     }
 
     public async Task<Result<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
