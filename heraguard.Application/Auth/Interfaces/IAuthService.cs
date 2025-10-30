@@ -9,4 +9,8 @@ public interface IAuthService
 
     Task<Result<AuthResponseDto>>
         RegisterAsync(string email, string password, string name, string lastName, int roleId);
+    
+    Task<Result> LogoutAsync();
+    
+    Task<Result<AuthResponseDto>> RefreshTokenAsync(string refreshToken);
 }
