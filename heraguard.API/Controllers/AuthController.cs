@@ -11,10 +11,12 @@ namespace heraguard.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IMediator mediator)
+    public AuthController(IMediator mediator, ILogger<AuthController> logger)
     {
         _mediator = mediator;
+        _logger = logger;
     }
 
     [HttpPost("login")]
@@ -45,6 +47,34 @@ public class AuthController : ControllerBase
             ? Ok(result.Value)
             : HandleErrorResult(result);
     }
+    
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var userId = User.FindFirst("sub")?.Value ?? User.Identity?.Name;
+        
+        var command = new LogoutCommand(userId);
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            _logger.LogInformation("User {UserId} logged out successfully", userId);
+            return Ok(new { message = "Logout exitoso" });
+        }
+
+        return HandleErrorResult(result);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
+    {
+        var command = new RefreshTokenCommand(refreshTokenDto.RefreshToken);
+        var result = await _mediator.Send(command);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : HandleErrorResult(result);
+    }
 
     private IActionResult HandleErrorResult<T>(Result<T> result)
     {
@@ -57,6 +87,21 @@ public class AuthController : ControllerBase
             ErrorType.Forbidden => StatusCode(StatusCodes.Status403Forbidden,
                 new { message = result.Error.Description }),
             _ => StatusCode(StatusCodes.Status500InternalServerError, new { message = "Error interno del servidor" })
+        };
+    }
+    
+    private IActionResult HandleErrorResult(Result result)
+    {
+        return result.Error.Type switch
+        {
+            ErrorType.Validation => BadRequest(new { message = result.Error.Description }),
+            ErrorType.NotFound => NotFound(new { message = result.Error.Description }),
+            ErrorType.Conflict => Conflict(new { message = result.Error.Description }),
+            ErrorType.Unauthorized => Unauthorized(new { message = result.Error.Description }),
+            ErrorType.Forbidden => StatusCode(StatusCodes.Status403Forbidden,
+                new { message = result.Error.Description }),
+            _ => StatusCode(StatusCodes.Status500InternalServerError, 
+                new { message = "Error interno del servidor" })
         };
     }
 }

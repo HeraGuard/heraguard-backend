@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using AutoMapper;
 using heraguard.Application.Auth.Dtos;
 using heraguard.Application.Auth.Interfaces;
@@ -5,6 +7,7 @@ using heraguard.Application.Users.DTOs;
 using heraguard.Domain.Common;
 using heraguard.Domain.Common.Errors;
 using heraguard.Domain.Entities;
+using Microsoft.Extensions.Configuration;
 using Supabase;
 using Supabase.Gotrue.Exceptions;
 
@@ -15,12 +18,14 @@ public class AuthService : IAuthService
     private readonly IAuthRepository _authRepository;
     private readonly IMapper _mapper;
     private readonly Client _supabase;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(IAuthRepository authRepository, IMapper mapper, Client supabase)
+    public AuthService(IAuthRepository authRepository, IMapper mapper, Client supabase,  IConfiguration configuration)
     {
         _authRepository = authRepository;
         _mapper = mapper;
         _supabase = supabase;
+        _configuration = configuration;
     }
 
     public async Task<Result<AuthResponseDto>> LoginAsync(string email, string password)
@@ -93,6 +98,53 @@ public class AuthService : IAuthService
         }
     }
 
+    public async Task<Result> LogoutAsync()
+    {
+        return Result.Success();
+    }
+
+    public async Task<Result<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
+    {
+        try
+        {
+            var supabaseUrl = _configuration["Supabase:Url"];
+            var supabaseKey = _configuration["Supabase:AnonKey"];
+
+            using var client = new HttpClient();
+            
+            var url = $"{supabaseUrl}/auth/v1/token?grant_type=refresh_token";
+            var body = JsonSerializer.Serialize(new { refresh_token = refreshToken });
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            
+            client.DefaultRequestHeaders.Add("apikey", supabaseKey);
+            
+            var response = await client.PostAsync(url, content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            
+            if (!response.IsSuccessStatusCode)
+                return Result<AuthResponseDto>.Failure(AuthErrors.InvalidToken);
+
+            var tokenData = JsonSerializer.Deserialize<JsonElement>(responseBody);
+            var email = tokenData.GetProperty("user").GetProperty("email").GetString();
+
+            var user = await _authRepository.GetUserByEmailAsync(email!);
+            
+            if (user == null)
+                return Result<AuthResponseDto>.Failure(AuthErrors.InvalidToken);
+
+            return Result<AuthResponseDto>.Success(new AuthResponseDto
+            {
+                AccessToken = tokenData.GetProperty("access_token").GetString() ?? "",
+                RefreshToken = tokenData.GetProperty("refresh_token").GetString() ?? refreshToken,
+                User = _mapper.Map<UserDto>(user)
+            });
+        }
+        catch (Exception ex)
+        {
+            return Result<AuthResponseDto>.Failure(AuthErrors.SessionExpired);
+        }
+    }
+    
     private static Error MapSupabaseErrorToAuthError(GotrueException ex)
     {
         var message = ex.Message.ToLowerInvariant();
