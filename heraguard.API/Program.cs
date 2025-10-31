@@ -1,4 +1,5 @@
 using heraguard.API.Middleware;
+using heraguard.Application.Activities.Interfaces;
 using heraguard.Application.Auth.Commands;
 using heraguard.Application.Auth.Interfaces;
 using heraguard.Application.Auth.Services;
