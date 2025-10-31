@@ -1,5 +1,4 @@
 using AutoMapper;
-using heraguard.Application.Auth.Interfaces;
 using heraguard.Application.Medications.Commands;
 using heraguard.Application.Medications.Dtos;
 using heraguard.Application.Medications.Interfaces;
@@ -27,7 +26,9 @@ public class CreateMedicationHandler: IRequestHandler<CreateMedicationCommand, R
     
         var result = await _repository.AddMedicationAsync(medication);
         
-        var medicationDto = _mapper.Map<ReadMedicationDto>(result);
+        var medicationWithRelations = await _repository.GetMedicationByIdWithRelationsAsync(result.MedicationId);
+        
+        var medicationDto = _mapper.Map<ReadMedicationDto>(medicationWithRelations);
     
         return Result<ReadMedicationDto>.Success(medicationDto); 
     }

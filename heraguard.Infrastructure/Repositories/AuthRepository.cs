@@ -27,4 +27,25 @@ public class AuthRepository : IAuthRepository
         await _context.SaveChangesAsync();
         return user;
     }
+
+    public async Task CreateElderProfileAsync(Guid userId)
+    {
+        var elderProfile = new ElderProfile { UserId = userId };
+        await _context.Elders.AddAsync(elderProfile);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task CreateDoctorProfileAsync(Guid userId)
+    {
+        var doctorProfile = new DoctorProfile { UserId = userId };
+        await _context.Doctors.AddAsync(doctorProfile);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task CreateCaregiverProfileAsync(Guid userId)
+    {
+        var caregiverProfile = new CaregiverProfile { UserId = userId };
+        await _context.Caregivers.AddAsync(caregiverProfile);
+        await _context.SaveChangesAsync();
+    }
 }
