@@ -1,3 +1,5 @@
+using heraguard.Application.Activities.Dtos;
+using heraguard.Application.Activities.Interfaces;
 using heraguard.Domain.Entities;
 using heraguard.Infrastructure.Data;
 
@@ -12,12 +14,14 @@ public class ActivityRepository : IActivityRepository
         _context = context;
     }
 
-    public Task<Activity> CreateActivityAsync(Activity activity)
+    public async Task<Activity> AddActivityAsync(Activity activity)
     {
-        throw new NotImplementedException();
+        await _context.Activities.AddAsync(activity);
+        await _context.SaveChangesAsync();
+        return activity;
     }
 
-    public Task<Activity> UpdateActivityAsync(ActivityUpdateDto activityUpdateDto)
+    public Task<Activity> UpdateActivityAsync(Activity activity)
     {
         throw new NotImplementedException();
     }
