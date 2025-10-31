@@ -1,3 +1,4 @@
+using heraguard.Application.Activities.Interfaces;
 using MediatR;
 
 public class DeleteActivityHandler : IRequestHandler<DeleteActivityCommand, Unit>

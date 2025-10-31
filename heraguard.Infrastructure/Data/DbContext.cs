@@ -8,7 +8,7 @@ public class HeraGuardDbContext : DbContext
     public HeraGuardDbContext(DbContextOptions<HeraGuardDbContext> options) : base(options)
     {
     }
-    
+
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<ElderProfile> Elders => Set<ElderProfile>();
@@ -17,22 +17,25 @@ public class HeraGuardDbContext : DbContext
 
     public DbSet<Medication> Medications => Set<Medication>();
     public DbSet<Activity> Activities => Set<Activity>();
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //PK
         modelBuilder.Entity<ElderProfile>()
             .HasKey(p => p.UserId);
-    
+
         modelBuilder.Entity<CaregiverProfile>()
             .HasKey(p => p.UserId);
-    
+
         modelBuilder.Entity<DoctorProfile>()
             .HasKey(p => p.UserId);
-        
+
         modelBuilder.Entity<Medication>()
             .HasKey(m => m.MedicationId);
-        
+
+        modelBuilder.Entity<Activity>()
+            .HasKey(a => a.ActivityId);
+
         //Relaciones
         modelBuilder.Entity<User>()
             .HasOne(u => u.Role)
@@ -53,7 +56,7 @@ public class HeraGuardDbContext : DbContext
             .HasOne(u => u.DoctorProfile)
             .WithOne(p => p.User)
             .HasForeignKey<DoctorProfile>(p => p.UserId);
-        
+
         modelBuilder.Entity<Medication>()
             .HasOne(m => m.DoctorProfile)
             .WithMany()
@@ -71,8 +74,23 @@ public class HeraGuardDbContext : DbContext
             .WithMany()
             .HasForeignKey(m => m.ElderId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         modelBuilder.Entity<Activity>()
-            .HasKey(a => a.ActivityId);
+            .HasOne(a => a.DoctorProfile)
+            .WithMany()
+            .HasForeignKey(a => a.DoctorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Activity>()
+            .HasOne(a => a.CaregiverProfile)
+            .WithMany()
+            .HasForeignKey(a => a.CaregiverId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Activity>()
+            .HasOne(a => a.ElderProfile)
+            .WithMany()
+            .HasForeignKey(a => a.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

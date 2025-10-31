@@ -1,6 +1,7 @@
+using heraguard.Application.Activities.Dtos;
 using MediatR;
 
-public class GetActivitByIdyQuery : IRequest<ActivityCreateDto>
+public class GetActivitByIdyQuery : IRequest<CreateActivityDto>
 {
     public Guid Id { get; }
 

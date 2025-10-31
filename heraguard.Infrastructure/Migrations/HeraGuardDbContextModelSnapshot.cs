@@ -22,21 +22,24 @@ namespace heraguard.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Activity", b =>
+            modelBuilder.Entity("heraguard.Domain.Entities.Activity", b =>
                 {
                     b.Property<Guid>("ActivityId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AdultoId")
+                    b.Property<Guid?>("CaregiverId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("DoctorID")
+                    b.Property<Guid?>("DoctorId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Duration")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid>("ElderId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Frequency")
                         .IsRequired()
@@ -49,10 +52,16 @@ namespace heraguard.Infrastructure.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<TimeOnly>("RecommendedTime")
-                        .HasColumnType("time without time zone");
+                    b.Property<TimeSpan>("RecommendedTime")
+                        .HasColumnType("interval");
 
                     b.HasKey("ActivityId");
+
+                    b.HasIndex("CaregiverId");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("ElderId");
 
                     b.ToTable("Activities");
                 });
@@ -227,6 +236,31 @@ namespace heraguard.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("heraguard.Domain.Entities.Activity", b =>
+                {
+                    b.HasOne("heraguard.Domain.Entities.CaregiverProfile", "CaregiverProfile")
+                        .WithMany()
+                        .HasForeignKey("CaregiverId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("heraguard.Domain.Entities.DoctorProfile", "DoctorProfile")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("heraguard.Domain.Entities.ElderProfile", "ElderProfile")
+                        .WithMany()
+                        .HasForeignKey("ElderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CaregiverProfile");
+
+                    b.Navigation("DoctorProfile");
+
+                    b.Navigation("ElderProfile");
                 });
 
             modelBuilder.Entity("heraguard.Domain.Entities.CaregiverProfile", b =>
