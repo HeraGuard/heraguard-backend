@@ -74,6 +74,4 @@ public class MedicationController : BaseController
     
         return HandleErrorResult(result);
     }
-
-
 }
