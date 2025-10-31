@@ -14,7 +14,7 @@ public class User
     public DateTime? RefreshTokenExpires { get; set; }
     public DateTime? CreatedAt { get; set; }
     
-    public AdultoMayorProfile? AdultoMayorProfile { get; set; }
-    public FamiliarProfile? FamiliarProfile { get; set; }
+    public ElderProfile? AdultoMayorProfile { get; set; }
+    public CaregiverProfile? FamiliarProfile { get; set; }
     public DoctorProfile? DoctorProfile { get; set; }
 }

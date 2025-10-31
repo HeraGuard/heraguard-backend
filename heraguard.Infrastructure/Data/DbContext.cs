@@ -11,9 +11,9 @@ public class HeraGuardDbContext : DbContext
     
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
-    public DbSet<AdultoMayorProfile> AdultosMayores => Set<AdultoMayorProfile>();
-    public DbSet<FamiliarProfile> Familiares => Set<FamiliarProfile>();
-    public DbSet<DoctorProfile> Doctores => Set<DoctorProfile>();
+    public DbSet<ElderProfile> Elders => Set<ElderProfile>();
+    public DbSet<CaregiverProfile> Caregivers => Set<CaregiverProfile>();
+    public DbSet<DoctorProfile> Doctors => Set<DoctorProfile>();
 
     public DbSet<Medication> Medications => Set<Medication>();
     public DbSet<Activity> Activities => Set<Activity>();
@@ -21,16 +21,17 @@ public class HeraGuardDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //PK
-        modelBuilder.Entity<AdultoMayorProfile>()
+        modelBuilder.Entity<ElderProfile>()
             .HasKey(p => p.UserId);
     
-        modelBuilder.Entity<FamiliarProfile>()
+        modelBuilder.Entity<CaregiverProfile>()
             .HasKey(p => p.UserId);
     
         modelBuilder.Entity<DoctorProfile>()
             .HasKey(p => p.UserId);
         
-        
+        modelBuilder.Entity<Medication>()
+            .HasKey(m => m.MedicationId);
         
         //Relaciones
         modelBuilder.Entity<User>()
@@ -41,21 +42,36 @@ public class HeraGuardDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasOne(u => u.AdultoMayorProfile)
             .WithOne(p => p.User)
-            .HasForeignKey<AdultoMayorProfile>(p => p.UserId);
+            .HasForeignKey<ElderProfile>(p => p.UserId);
 
         modelBuilder.Entity<User>()
             .HasOne(u => u.FamiliarProfile)
             .WithOne(p => p.User)
-            .HasForeignKey<FamiliarProfile>(p => p.UserId);
+            .HasForeignKey<CaregiverProfile>(p => p.UserId);
 
         modelBuilder.Entity<User>()
             .HasOne(u => u.DoctorProfile)
             .WithOne(p => p.User)
             .HasForeignKey<DoctorProfile>(p => p.UserId);
+        
+        modelBuilder.Entity<Medication>()
+            .HasOne(m => m.DoctorProfile)
+            .WithMany()
+            .HasForeignKey(m => m.DoctorId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Medication>()
-            .HasKey(m => m.MedicationId);
+            .HasOne(m => m.CaregiverProfile)
+            .WithMany()
+            .HasForeignKey(m => m.CaregiverId)
+            .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Medication>()
+            .HasOne(m => m.ElderProfile)
+            .WithMany()
+            .HasForeignKey(m => m.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
         modelBuilder.Entity<Activity>()
             .HasKey(a => a.ActivityId);
     }
