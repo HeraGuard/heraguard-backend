@@ -9,8 +9,9 @@ public interface IMedicationRepository
     Task<Medication> AddMedicationAsync(Medication medication);
     Task<Medication> UpdateMedicationAsync(Medication medication);
     Task<bool> DeleteMedicationAsync(Guid medicationId);
-    Task<List<Medication>> GetAllMedicationsAsync();
-    Task<Medication> GetMedicationByIdAsync(Guid medicationId);
+    Task<List<Medication>> GetAllMedicationsByUserIdAsync(Guid userId);
+    Task<Medication?> GetMedicationByIdAsync(Guid medicationId);
+   Task<Medication> GetMedicationByIdWithRelationsAsync(Guid medicationId);
 
 
 }

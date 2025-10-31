@@ -12,12 +12,19 @@ public class CreateMedicationCommand: IRequest<Result<ReadMedicationDto>>
     public string Frequency { get; set; }
     public int Duration { get; set; }
     
-    public CreateMedicationCommand(string name, string description, string dosage, string frequency, int duration)
+    public Guid? DoctorId { get; set; }
+    public Guid? CaregiverId { get; set; }
+    public Guid ElderId { get; set; }
+    
+    public CreateMedicationCommand(string name, string description, string dosage, string frequency, int duration,  Guid? doctorId, Guid? caregiverId, Guid elderId)
     {
         Name = name;
         Description = description;
         Dosage = dosage;
         Frequency = frequency;
         Duration = duration;
+        DoctorId = doctorId;
+        CaregiverId = caregiverId;
+        ElderId = elderId;
     }
 }

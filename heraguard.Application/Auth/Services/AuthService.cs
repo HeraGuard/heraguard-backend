@@ -19,6 +19,7 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly Client _supabase;
     private readonly IConfiguration _configuration;
+    
 
     public AuthService(IAuthRepository authRepository, IMapper mapper, Client supabase,  IConfiguration configuration)
     {
@@ -69,9 +70,11 @@ public class AuthService : IAuthService
             if (authResponse?.User == null)
                 return Result<AuthResponseDto>.Failure(AuthErrors.AuthenticationFailed);
 
+            var userId = Guid.Parse(authResponse.User.Id);
+            
             var user = new User
             {
-                Id = Guid.Parse(authResponse.User.Id),
+                Id = userId,
                 Email = email,
                 Name = name,
                 LastName = lastName,
@@ -79,6 +82,9 @@ public class AuthService : IAuthService
             };
 
             await _authRepository.CreateUserAsync(user);
+            
+            await CreateUserProfileAsync(userId, roleId);
+            
             var userWithRole = await _authRepository.GetUserByEmailAsync(email);
 
             return Result<AuthResponseDto>.Success(new AuthResponseDto
@@ -95,6 +101,22 @@ public class AuthService : IAuthService
         catch (Exception)
         {
             return Result<AuthResponseDto>.Failure(AuthErrors.AuthenticationFailed);
+        }
+    }
+    
+    private async Task CreateUserProfileAsync(Guid userId, int roleId)
+    {
+        switch (roleId)
+        {
+            case 1: 
+                await _authRepository.CreateElderProfileAsync(userId);
+                break;
+            case 2: 
+                await _authRepository.CreateCaregiverProfileAsync(userId);
+                break;
+            case 3: 
+                await _authRepository.CreateDoctorProfileAsync(userId);
+                break;
         }
     }
 
