@@ -1,12 +1,15 @@
 using heraguard.Application.Activities.Dtos;
+using heraguard.Domain.Common;
 using MediatR;
 
-public class GetAllActivitiesByUserIdQuery : IRequest<IEnumerable<CreateActivityDto>>
-{
-    public Guid Id { get; }
+namespace heraguard.Application.Activities.Queries;
 
-    public GetAllActivitiesByUserIdQuery(Guid id)
+public class GetAllActivitiesByUserIdQuery : IRequest<Result<List<ReadActivityDto>>>
+{
+    public Guid UserId { get; set; }
+
+    public GetAllActivitiesByUserIdQuery(Guid userid)
     {
-        Id = id;
+        UserId = userid;
     }
 }

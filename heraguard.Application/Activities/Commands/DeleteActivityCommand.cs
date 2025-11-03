@@ -1,11 +1,14 @@
+using heraguard.Domain.Common;
 using MediatR;
 
-public class DeleteActivityCommand : IRequest<Unit>
-{
-    public Guid Id { get; }
+namespace heraguard.Application.Activities.Commands;
 
-    public DeleteActivityCommand(Guid id)
+public class DeleteActivityCommand : IRequest<Result<Unit>>
+{
+    public Guid ActivityId { get; set; }
+
+    public DeleteActivityCommand(Guid activityid)
     {
-        Id = id;
+        ActivityId = activityid;
     }
 }
