@@ -2,6 +2,7 @@ using heraguard.Application.Activities.Dtos;
 using heraguard.Application.Activities.Interfaces;
 using heraguard.Domain.Entities;
 using heraguard.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace heraguard.Infrastructure.Repositories;
 
@@ -21,24 +22,51 @@ public class ActivityRepository : IActivityRepository
         return activity;
     }
 
-    public Task<Activity> UpdateActivityAsync(Activity activity)
+    public async Task<Activity> UpdateActivityAsync(Activity activity)
     {
-        throw new NotImplementedException();
+        _context.Activities.Update(activity);
+        await _context.SaveChangesAsync();
+        return activity;
     }
 
-    public Task<Activity> GetActivityByIdAsync(Guid id)
+    public async Task<Activity?> GetActivityByIdAsync(Guid activityId)
     {
-        throw new NotImplementedException();
+        return await _context.Activities
+            .FirstOrDefaultAsync(a => a.ActivityId == activityId);
     }
 
-    public Task<Activity> DeleteActivityAsync(Guid id)
+    public async Task<bool> DeleteActivityAsync(Guid activityId)
     {
-        throw new NotImplementedException();
+        var deleted = await _context.Activities
+            .Where(a => a.ActivityId == activityId)
+            .ExecuteDeleteAsync();
+
+        return deleted > 0;
     }
 
-    public Task<List<Activity>> GetAllActivitiesByUserIdAsync(Guid id)
+    public Task<List<Activity>> GetAllActivitiesByUserIdAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        return _context.Activities
+            .Where(a => a.ElderId == userId)
+            .Include(a => a.DoctorProfile)
+            .ThenInclude(d => d.User)
+            .Include(a => a.CaregiverProfile)
+            .ThenInclude(c => c.User)
+            .Include(a => a.ElderProfile)
+            .ThenInclude(e => e.User)
+            .ToListAsync();
+    }
+
+    public Task<Activity> GetActivityByIdWithRelationsAsync(Guid activityId)
+    {
+        return _context.Activities
+            .Include(a => a.DoctorProfile)
+            .ThenInclude(d => d.User)
+            .Include(a => a.CaregiverProfile)
+            .ThenInclude(c => c.User)
+            .Include(a => a.ElderProfile)
+            .ThenInclude(e => e.User)
+            .FirstOrDefaultAsync(a => a.ActivityId == activityId);
     }
 
 }

@@ -6,7 +6,8 @@ public interface IActivityRepository
 {
     Task<Activity> AddActivityAsync(Activity activity);
     Task<Activity> UpdateActivityAsync(Activity activity);
-    Task<Activity> GetActivityByIdAsync(Guid id);
-    Task<Activity> DeleteActivityAsync(Guid id);
-    Task<List<Activity>> GetAllActivitiesByUserIdAsync(Guid id);
+    Task<Activity?> GetActivityByIdAsync(Guid activityId);
+    Task<bool> DeleteActivityAsync(Guid activityId);
+    Task<List<Activity>> GetAllActivitiesByUserIdAsync(Guid userId);
+    Task<Activity> GetActivityByIdWithRelationsAsync(Guid activityId);
 }
