@@ -29,7 +29,7 @@ public class UpdateMedicationHandler: IRequestHandler<UpdateMedicationCommand, R
         if (request.Name != null) medication.Name = request.Name;
         if (request.Description != null) medication.Description = request.Description;
         if (request.Dosage != null) medication.Dosage = request.Dosage;
-        if (request.Frequency != null) medication.Frequency = request.Frequency;
+       // if (request.Frequency) medication.Frequency = request.Frequency;
         if (request.Duration.HasValue) medication.Duration = request.Duration.Value;
         if (request.DoctorId.HasValue) medication.DoctorId = request.DoctorId;
         if (request.CaregiverId.HasValue) medication.CaregiverId = request.CaregiverId;
