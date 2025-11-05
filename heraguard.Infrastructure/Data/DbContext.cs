@@ -17,6 +17,7 @@ public class HeraGuardDbContext : DbContext
 
     public DbSet<Medication> Medications => Set<Medication>();
     public DbSet<Activity> Activities => Set<Activity>();
+    public DbSet<MedicalAppointment> MedicalAppointments => Set<MedicalAppointment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +36,9 @@ public class HeraGuardDbContext : DbContext
 
         modelBuilder.Entity<Activity>()
             .HasKey(a => a.ActivityId);
+
+        modelBuilder.Entity<MedicalAppointment>()
+            .HasKey(m => m.MedicalAppointmentId);
 
         //Relaciones
         modelBuilder.Entity<User>()
@@ -91,6 +95,24 @@ public class HeraGuardDbContext : DbContext
             .HasOne(a => a.ElderProfile)
             .WithMany()
             .HasForeignKey(a => a.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicalAppointment>()
+            .HasOne(m => m.DoctorProfile)
+            .WithMany()
+            .HasForeignKey(m => m.DoctorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicalAppointment>()
+            .HasOne(m => m.CaregiverProfile)
+            .WithMany()
+            .HasForeignKey(m => m.CaregiverId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicalAppointment>()
+            .HasOne(m => m.ElderProfile)
+            .WithMany()
+            .HasForeignKey(m => m.ElderId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
