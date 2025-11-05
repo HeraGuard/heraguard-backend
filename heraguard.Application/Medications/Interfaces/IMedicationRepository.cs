@@ -1,5 +1,3 @@
-using heraguard.Application.Medications.Dtos;
-using heraguard.Domain.Common;
 using heraguard.Domain.Entities;
 
 namespace heraguard.Application.Medications.Interfaces;

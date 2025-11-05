@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using heraguard.Infrastructure.Data;
@@ -11,9 +12,11 @@ using heraguard.Infrastructure.Data;
 namespace heraguard.Infrastructure.Migrations
 {
     [DbContext(typeof(HeraGuardDbContext))]
-    partial class HeraGuardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251103192428_FixMedicatins2")]
+    partial class FixMedicatins2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,45 +134,6 @@ namespace heraguard.Infrastructure.Migrations
                     b.ToTable("Elders");
                 });
 
-            modelBuilder.Entity("heraguard.Domain.Entities.MedicalAppointment", b =>
-                {
-                    b.Property<Guid>("MedicalAppointmentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CaregiverId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("DoctorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ElderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("NameOfPatient")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly>("Time")
-                        .HasColumnType("time without time zone");
-
-                    b.HasKey("MedicalAppointmentId");
-
-                    b.HasIndex("CaregiverId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("ElderId");
-
-                    b.ToTable("MedicalAppointments");
-                });
-
             modelBuilder.Entity("heraguard.Domain.Entities.Medication", b =>
                 {
                     b.Property<Guid>("MedicationId")
@@ -203,9 +167,6 @@ namespace heraguard.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("PrescriptionId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -217,33 +178,7 @@ namespace heraguard.Infrastructure.Migrations
 
                     b.HasIndex("ElderId");
 
-                    b.HasIndex("PrescriptionId");
-
                     b.ToTable("Medications");
-                });
-
-            modelBuilder.Entity("heraguard.Domain.Entities.Prescription", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("DoctorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ElderId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("ElderId");
-
-                    b.ToTable("Prescriptions");
                 });
 
             modelBuilder.Entity("heraguard.Domain.Entities.Role", b =>
@@ -366,31 +301,6 @@ namespace heraguard.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("heraguard.Domain.Entities.MedicalAppointment", b =>
-                {
-                    b.HasOne("heraguard.Domain.Entities.CaregiverProfile", "CaregiverProfile")
-                        .WithMany()
-                        .HasForeignKey("CaregiverId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("heraguard.Domain.Entities.DoctorProfile", "DoctorProfile")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("heraguard.Domain.Entities.ElderProfile", "ElderProfile")
-                        .WithMany()
-                        .HasForeignKey("ElderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CaregiverProfile");
-
-                    b.Navigation("DoctorProfile");
-
-                    b.Navigation("ElderProfile");
-                });
-
             modelBuilder.Entity("heraguard.Domain.Entities.Medication", b =>
                 {
                     b.HasOne("heraguard.Domain.Entities.CaregiverProfile", "CaregiverProfile")
@@ -409,36 +319,11 @@ namespace heraguard.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("heraguard.Domain.Entities.Prescription", "Prescription")
-                        .WithMany("Medications")
-                        .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CaregiverProfile");
 
                     b.Navigation("DoctorProfile");
 
                     b.Navigation("ElderProfile");
-
-                    b.Navigation("Prescription");
-                });
-
-            modelBuilder.Entity("heraguard.Domain.Entities.Prescription", b =>
-                {
-                    b.HasOne("heraguard.Domain.Entities.DoctorProfile", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId");
-
-                    b.HasOne("heraguard.Domain.Entities.ElderProfile", "Elder")
-                        .WithMany()
-                        .HasForeignKey("ElderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Elder");
                 });
 
             modelBuilder.Entity("heraguard.Domain.Entities.User", b =>
@@ -450,11 +335,6 @@ namespace heraguard.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("heraguard.Domain.Entities.Prescription", b =>
-                {
-                    b.Navigation("Medications");
                 });
 
             modelBuilder.Entity("heraguard.Domain.Entities.User", b =>

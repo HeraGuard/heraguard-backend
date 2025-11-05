@@ -6,7 +6,7 @@ public class ReadMedicationDto
     public string Name { get; set; } =  string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Dosage { get; set; } = string.Empty;
-    public string Frequency { get; set; } = string.Empty;
+    public int Frequency { get; set; } 
     public int Duration { get; set; } 
     
     public Guid? DoctorId { get; set; }
