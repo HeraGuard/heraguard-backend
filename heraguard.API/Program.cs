@@ -5,6 +5,7 @@ using heraguard.Application.Auth.Interfaces;
 using heraguard.Application.Auth.Services;
 using heraguard.Application.Mapping;
 using heraguard.Application.Medications.Interfaces;
+using heraguard.Application.MedicalAppointments.Interfaces;
 using heraguard.Infrastructure.Data;
 using heraguard.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMedicationRepository, MedicationRepository>();
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IMedicalAppointmentRepository, MedicalAppointmentRepository>();
 
 
 // CORS
