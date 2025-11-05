@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using heraguard.Infrastructure.Data;
@@ -11,9 +12,11 @@ using heraguard.Infrastructure.Data;
 namespace heraguard.Infrastructure.Migrations
 {
     [DbContext(typeof(HeraGuardDbContext))]
-    partial class HeraGuardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105152208_AddReceta")]
+    partial class AddReceta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,10 +242,6 @@ namespace heraguard.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("ElderId");
-
                     b.ToTable("Prescriptions");
                 });
 
@@ -422,23 +421,6 @@ namespace heraguard.Infrastructure.Migrations
                     b.Navigation("ElderProfile");
 
                     b.Navigation("Prescription");
-                });
-
-            modelBuilder.Entity("heraguard.Domain.Entities.Prescription", b =>
-                {
-                    b.HasOne("heraguard.Domain.Entities.DoctorProfile", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId");
-
-                    b.HasOne("heraguard.Domain.Entities.ElderProfile", "Elder")
-                        .WithMany()
-                        .HasForeignKey("ElderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Elder");
                 });
 
             modelBuilder.Entity("heraguard.Domain.Entities.User", b =>

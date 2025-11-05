@@ -7,4 +7,7 @@ public class Prescription
     public Guid? DoctorId { get; set; }
     public DateTime Date { get; set; }
     public List<Medication> Medications { get; set; } = new List<Medication>();
+    
+    public ElderProfile Elder { get; set; }  
+    public DoctorProfile? Doctor { get; set; }
 }

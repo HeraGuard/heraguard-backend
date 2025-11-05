@@ -33,6 +33,13 @@ public class PrescriptionRepository : IPrescriptionRepository
     public async Task<Prescription?> GetPrescriptionByIdAsync(Guid prescriptionId)
     {
         return await _context.Prescriptions
+            .Include(p => p.Medications)
+            .Include(p => p.Elder)
+            .ThenInclude(e => e.User) 
+            .Include(p => p.Doctor)
+            .ThenInclude(d => d.User) 
             .FirstOrDefaultAsync(p => p.Id == prescriptionId);
+
     }
+
 }

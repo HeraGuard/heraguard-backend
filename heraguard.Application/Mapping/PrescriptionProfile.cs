@@ -1,3 +1,4 @@
+using heraguard.Application.Prescriptions.Commands;
 using heraguard.Application.Prescriptions.Dtos;
 using heraguard.Domain.Entities;
 
@@ -12,6 +13,10 @@ public class PrescriptionProfile : Profile
         CreateMap<CreatePrescriptionDto, Prescription>()
             .ForMember(dest => dest.Medications,
                 opt => opt.MapFrom(src => src.Medications)); 
+        
+        CreateMap<CreatePrescriptionCommand, Prescription>()
+            .ForMember(dest => dest.Medications,
+                opt => opt.MapFrom(src => src.Medications));
         
         CreateMap<Prescription, ReadPrescriptionDto>()
             .ForMember(dest => dest.Medications,

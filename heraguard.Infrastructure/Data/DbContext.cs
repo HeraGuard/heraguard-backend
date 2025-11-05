@@ -126,5 +126,16 @@ public class HeraGuardDbContext : DbContext
             .HasForeignKey(m => m.PrescriptionId)
             .OnDelete(DeleteBehavior.Cascade);
         
+        modelBuilder.Entity<Prescription>()
+            .HasOne(p => p.Elder)
+            .WithMany()
+            .HasForeignKey(p => p.ElderId);
+
+        modelBuilder.Entity<Prescription>()
+            .HasOne(p => p.Doctor)
+            .WithMany()
+            .HasForeignKey(p => p.DoctorId);
+
+        
     }
 }

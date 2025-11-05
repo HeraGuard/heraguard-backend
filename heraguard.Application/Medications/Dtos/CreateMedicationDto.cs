@@ -5,10 +5,10 @@ public class CreateMedicationDto
     public string Name { get; set; } =  string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Dosage { get; set; } = string.Empty;
-    public string Frequency { get; set; } = string.Empty;
+    public int Frequency { get; set; } 
     public int Duration { get; set; } 
     
-    public int? DoctorId { get; set; }
-    public int? CaregiverId { get; set; }
-    public int ElderId { get; set; }
+    public Guid? DoctorId { get; set; }
+    public Guid? CaregiverId { get; set; }
+    public Guid ElderId { get; set; }
 }
