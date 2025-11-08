@@ -17,6 +17,32 @@ public class UserRepository:IUserRepository
     public async Task<User> GetByLinkingCodeAsync(string linkingCode)
     {
         return await _context.Users
+            .Include(u => u.AdultoMayorProfile) 
+            .AsNoTracking() 
             .FirstOrDefaultAsync(u => u.AdultoMayorProfile.LinkingCode == linkingCode);
+    }
+
+
+    public async Task<List<User>> SearchUsersAsync(string query, int roleId)
+    {
+        var searchTerm = query?.Trim().ToLower() ?? string.Empty;
+        
+        var usersQuery = _context.Users
+            .Include(u => u.Role)
+            .AsNoTracking() 
+            .Where(u => u.RoleId == roleId); 
+        
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            usersQuery = usersQuery.Where(u => 
+                u.Name.ToLower().Contains(searchTerm) || 
+                u.LastName.ToLower().Contains(searchTerm));
+        }
+
+        return await usersQuery
+            .OrderBy(u => u.Name) 
+            .Take(10)
+            .ToListAsync();
+            
     }
 }

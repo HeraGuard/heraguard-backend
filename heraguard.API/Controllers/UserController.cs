@@ -28,4 +28,20 @@ public class UserController: BaseController
         }
         return Ok(result.Value);
     }
+    
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchUsers(
+        [FromQuery] string query,
+        [FromQuery] int roleId)
+    {
+        var searchQuery = new SearchUsersQuery(query, roleId);
+        var result = await _mediator.Send(searchQuery);
+        
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Error);
+        }
+        
+        return Ok(result.Value);
+    }
 }
