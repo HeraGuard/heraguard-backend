@@ -8,4 +8,10 @@ public class ElderProfile
     public DateTime DateOfBirth { get; set; }
     public string EmergencyContact { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
+    public string LinkingCode { get; private set; } = string.Empty;
+
+    public void GenerateLinkingCode()
+    {
+        LinkingCode = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
+    }
 }

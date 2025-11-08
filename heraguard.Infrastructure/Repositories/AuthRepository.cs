@@ -31,6 +31,7 @@ public class AuthRepository : IAuthRepository
     public async Task CreateElderProfileAsync(Guid userId)
     {
         var elderProfile = new ElderProfile { UserId = userId };
+        elderProfile.GenerateLinkingCode();
         await _context.Elders.AddAsync(elderProfile);
         await _context.SaveChangesAsync();
     }
