@@ -19,6 +19,7 @@ public class HeraGuardDbContext : DbContext
     public DbSet<Activity> Activities => Set<Activity>();
     public DbSet<MedicalAppointment> MedicalAppointments => Set<MedicalAppointment>();
     public DbSet<Prescription> Prescriptions => Set<Prescription>();
+    public DbSet<Relationship> Relationships => Set<Relationship>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -136,6 +137,21 @@ public class HeraGuardDbContext : DbContext
             .WithMany()
             .HasForeignKey(p => p.DoctorId);
 
-        
+        // Configuración de Relationship
+        modelBuilder.Entity<Relationship>()
+            .HasKey(r => r.RelationshipId);
+
+        modelBuilder.Entity<Relationship>()
+            .HasOne(r => r.Elder)
+            .WithMany()
+            .HasForeignKey(r => r.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Relationship>()
+            .HasOne(r => r.RelatedUser)
+            .WithMany()
+            .HasForeignKey(r => r.RelatedUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }
