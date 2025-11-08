@@ -43,10 +43,13 @@ public class RelationshipRepository : IRelationshipRepository
     public async Task<List<Relationship>> GetRelationshipsByUserId(Guid userId, int typeId)
     {
         return await _context.Relationships
+            .Include(r => r.Elder)
+            .Include(r => r.RelatedUser)
             .Where(r => r.RelatedUserId == userId || r.ElderId == userId)
             .Where(r => r.RelationshipTypeId == typeId)
             .ToListAsync();
     }
+
 
     public async Task<Relationship?> GetByIdWithIncludesAsync(Guid relationshipId)
     {
