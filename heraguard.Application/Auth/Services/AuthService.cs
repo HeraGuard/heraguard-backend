@@ -19,9 +19,9 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly Client _supabase;
     private readonly IConfiguration _configuration;
-    
 
-    public AuthService(IAuthRepository authRepository, IMapper mapper, Client supabase,  IConfiguration configuration)
+
+    public AuthService(IAuthRepository authRepository, IMapper mapper, Client supabase, IConfiguration configuration)
     {
         _authRepository = authRepository;
         _mapper = mapper;
@@ -43,11 +43,14 @@ public class AuthService : IAuthService
             if (user == null)
                 return Result<AuthResponseDto>.Failure(AuthErrors.InvalidCredentials);
 
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.LinkingCode = await GetLinkingCodeIfElder(userDto.Id);
+
             return Result<AuthResponseDto>.Success(new AuthResponseDto
             {
                 AccessToken = session.AccessToken ?? "",
                 RefreshToken = session.RefreshToken ?? "",
-                User = _mapper.Map<UserDto>(user)
+                User = userDto
             });
         }
         catch (GotrueException ex)
@@ -58,6 +61,12 @@ public class AuthService : IAuthService
         {
             return Result<AuthResponseDto>.Failure(AuthErrors.AuthenticationFailed);
         }
+    }
+
+    private async Task<string?> GetLinkingCodeIfElder(Guid userId)
+    {
+        var elderProfile = await _authRepository.GetElderProfileByUserIdAsync(userId);
+        return elderProfile?.LinkingCode;
     }
 
     public async Task<Result<AuthResponseDto>> RegisterAsync(string email, string password, string name,
@@ -71,7 +80,7 @@ public class AuthService : IAuthService
                 return Result<AuthResponseDto>.Failure(AuthErrors.AuthenticationFailed);
 
             var userId = Guid.Parse(authResponse.User.Id);
-            
+
             var user = new User
             {
                 Id = userId,
@@ -82,16 +91,19 @@ public class AuthService : IAuthService
             };
 
             await _authRepository.CreateUserAsync(user);
-            
+
             await CreateUserProfileAsync(userId, roleId);
-            
+
             var userWithRole = await _authRepository.GetUserByEmailAsync(email);
+
+            var userDto = _mapper.Map<UserDto>(userWithRole);
+            userDto.LinkingCode = await GetLinkingCodeIfElder(userDto.Id);
 
             return Result<AuthResponseDto>.Success(new AuthResponseDto
             {
                 AccessToken = authResponse.AccessToken ?? "",
                 RefreshToken = authResponse.RefreshToken ?? "",
-                User = _mapper.Map<UserDto>(userWithRole)
+                User = userDto
             });
         }
         catch (GotrueException ex)
@@ -103,18 +115,18 @@ public class AuthService : IAuthService
             return Result<AuthResponseDto>.Failure(AuthErrors.AuthenticationFailed);
         }
     }
-    
+
     private async Task CreateUserProfileAsync(Guid userId, int roleId)
     {
         switch (roleId)
         {
-            case 1: 
+            case 1:
                 await _authRepository.CreateElderProfileAsync(userId);
                 break;
-            case 2: 
+            case 2:
                 await _authRepository.CreateCaregiverProfileAsync(userId);
                 break;
-            case 3: 
+            case 3:
                 await _authRepository.CreateDoctorProfileAsync(userId);
                 break;
         }
@@ -133,16 +145,16 @@ public class AuthService : IAuthService
             var supabaseKey = _configuration["Supabase:AnonKey"];
 
             using var client = new HttpClient();
-            
+
             var url = $"{supabaseUrl}/auth/v1/token?grant_type=refresh_token";
             var body = JsonSerializer.Serialize(new { refresh_token = refreshToken });
             var content = new StringContent(body, Encoding.UTF8, "application/json");
-            
+
             client.DefaultRequestHeaders.Add("apikey", supabaseKey);
-            
+
             var response = await client.PostAsync(url, content);
             var responseBody = await response.Content.ReadAsStringAsync();
-            
+
             if (!response.IsSuccessStatusCode)
                 return Result<AuthResponseDto>.Failure(AuthErrors.InvalidToken);
 
@@ -150,15 +162,18 @@ public class AuthService : IAuthService
             var email = tokenData.GetProperty("user").GetProperty("email").GetString();
 
             var user = await _authRepository.GetUserByEmailAsync(email!);
-            
+
             if (user == null)
                 return Result<AuthResponseDto>.Failure(AuthErrors.InvalidToken);
+
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.LinkingCode = await GetLinkingCodeIfElder(user.Id);
 
             return Result<AuthResponseDto>.Success(new AuthResponseDto
             {
                 AccessToken = tokenData.GetProperty("access_token").GetString() ?? "",
                 RefreshToken = tokenData.GetProperty("refresh_token").GetString() ?? refreshToken,
-                User = _mapper.Map<UserDto>(user)
+                User = userDto
             });
         }
         catch (Exception ex)
@@ -166,7 +181,7 @@ public class AuthService : IAuthService
             return Result<AuthResponseDto>.Failure(AuthErrors.SessionExpired);
         }
     }
-    
+
     private static Error MapSupabaseErrorToAuthError(GotrueException ex)
     {
         var message = ex.Message.ToLowerInvariant();

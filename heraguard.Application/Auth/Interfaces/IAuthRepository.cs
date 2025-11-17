@@ -9,4 +9,5 @@ public interface IAuthRepository
     Task CreateElderProfileAsync(Guid userId);
     Task CreateDoctorProfileAsync(Guid userId);
     Task CreateCaregiverProfileAsync(Guid userId);
+    Task<ElderProfile?> GetElderProfileByUserIdAsync(Guid userId);
 }

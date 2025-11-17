@@ -49,4 +49,10 @@ public class AuthRepository : IAuthRepository
         await _context.Caregivers.AddAsync(caregiverProfile);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<ElderProfile?> GetElderProfileByUserIdAsync(Guid userId)
+    {
+        return await _context.Elders
+            .FirstOrDefaultAsync(e => e.UserId == userId);
+    }
 }
