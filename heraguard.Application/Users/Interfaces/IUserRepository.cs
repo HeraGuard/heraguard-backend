@@ -6,4 +6,5 @@ public interface IUserRepository
 {
     Task<User> GetByLinkingCodeAsync(string linkingCode);
     Task<List<User>> SearchUsersAsync(string query, int roleId);
+    Task<User?> GetByIdAsync(Guid userId);
 }
