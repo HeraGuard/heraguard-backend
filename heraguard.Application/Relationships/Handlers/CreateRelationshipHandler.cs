@@ -31,6 +31,12 @@ public class CreateRelationshipHandler : IRequestHandler<CreateRelationshipComma
         {
             return Result<ReadRelationshipDto>.Failure(UserErrors.InvalidCode);
         }
+        
+        var exists = await _relationshipRepository.ExistsRelationshipAsync(user.Id, request.RelatedUserId, request.RelationshipTypeId);
+        if (exists)
+        {
+            return Result<ReadRelationshipDto>.Failure(RelationshipErrors.AlreadyExists);
+        }
 
         var createRelationshipDto = new CreateRelationshipDto
         {

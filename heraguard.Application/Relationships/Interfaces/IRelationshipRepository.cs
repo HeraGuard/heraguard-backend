@@ -9,5 +9,6 @@ public interface IRelationshipRepository
     Task<Relationship?> GetRelationshipByIdAsync(Guid relationshipId);
     Task<List<Relationship>> GetRelationshipsByUserId(Guid userId, int typeId);
     Task<Relationship?> GetByIdWithIncludesAsync(Guid relationshipId);
+    Task<bool> ExistsRelationshipAsync(Guid elderId, Guid relatedUserId, int relationshipTypeId);
 
 }

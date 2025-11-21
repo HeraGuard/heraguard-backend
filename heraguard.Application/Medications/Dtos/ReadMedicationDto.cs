@@ -8,6 +8,7 @@ public class ReadMedicationDto
     public string Dosage { get; set; } = string.Empty;
     public int Frequency { get; set; } 
     public int Duration { get; set; } 
+    public DateTime StartDate { get; set; }
     
     public Guid? DoctorId { get; set; }
     public Guid ElderId { get; set; }

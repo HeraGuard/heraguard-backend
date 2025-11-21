@@ -11,12 +11,13 @@ public class CreateMedicationCommand: IRequest<Result<ReadMedicationDto>>
     public string Dosage { get; set; }
     public int Frequency { get; set; }
     public int Duration { get; set; }
+    public DateTime StartDate { get; set; }
     
     public Guid? DoctorId { get; set; }
     public Guid? CaregiverId { get; set; }
     public Guid ElderId { get; set; }
     
-    public CreateMedicationCommand(string name, string description, string dosage, int frequency, int duration,  Guid? doctorId, Guid? caregiverId, Guid elderId)
+    public CreateMedicationCommand(string name, string description, string dosage, int frequency, int duration,DateTime startDate,  Guid? doctorId, Guid? caregiverId, Guid elderId)
     {
         Name = name;
         Description = description;
@@ -26,5 +27,6 @@ public class CreateMedicationCommand: IRequest<Result<ReadMedicationDto>>
         DoctorId = doctorId;
         CaregiverId = caregiverId;
         ElderId = elderId;
+        StartDate = startDate;
     }
 }
