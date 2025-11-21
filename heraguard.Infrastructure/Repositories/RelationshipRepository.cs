@@ -58,5 +58,13 @@ public class RelationshipRepository : IRelationshipRepository
             .Include(r => r.RelatedUser)
             .FirstOrDefaultAsync(r => r.RelationshipId == relationshipId);
     }
+    
+    public async Task<bool> ExistsRelationshipAsync(Guid elderId, Guid relatedUserId, int relationshipTypeId)
+    {
+        return await _context.Relationships.AnyAsync(r =>
+            r.ElderId == elderId &&
+            r.RelatedUserId == relatedUserId &&
+            r.RelationshipTypeId == relationshipTypeId);
+    }
 
 }

@@ -12,12 +12,13 @@ public class UpdateMedicationCommand : IRequest<Result<ReadMedicationDto>>
     public string? Dosage { get; set; }
     public string? Frequency { get; set; }
     public int? Duration { get; set; }
+    public DateTime? StartDate { get; set; }
     
     public Guid? DoctorId { get; set; }
     public Guid? CaregiverId { get; set; }
     public Guid? ElderId { get; set; }
 
-    public UpdateMedicationCommand(Guid medicationId, string? name, string? description, string? dosage, string frequency, int? duration, Guid? doctorId, Guid? caregiverId, Guid? elderId)
+    public UpdateMedicationCommand(Guid medicationId, string? name, string? description, string? dosage, string frequency, int? duration, DateTime startDate, Guid? doctorId, Guid? caregiverId, Guid? elderId)
     {
         MedicationId = medicationId;
         Name = name;
@@ -28,5 +29,6 @@ public class UpdateMedicationCommand : IRequest<Result<ReadMedicationDto>>
         DoctorId = doctorId;
         CaregiverId = caregiverId;
         ElderId = elderId;
+        StartDate = startDate;
     }
 }
