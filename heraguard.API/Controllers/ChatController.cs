@@ -6,7 +6,7 @@ using heraguard.Application.Chat.Queries;
 namespace heraguard.API.Controllers;
 
 [ApiController]
-[Route("api")]
+[Route("api/[controller]")]
 public class ChatController : ControllerBase
 {
     private readonly IMediator _mediator;
