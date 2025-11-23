@@ -13,6 +13,7 @@ using heraguard.Infrastructure.Data;
 using heraguard.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Supabase;
+using heraguard.Application.Chat.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +55,8 @@ builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IMedicalAppointmentRepository, MedicalAppointmentRepository>();
 builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 builder.Services.AddScoped<IRelationshipRepository, RelationshipRepository>();
-builder.Services.AddScoped<IUserRepository,  UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IChatRepository, FirebaseChatRepository>();
 
 // CORS
 builder.Services.AddCors(options =>
