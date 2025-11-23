@@ -14,6 +14,7 @@ using heraguard.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Supabase;
 using heraguard.Application.Chat.Interfaces;
+using Firebase.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +47,14 @@ builder.Services.AddScoped(provider =>
         builder.Configuration["Supabase:AnonKey"] ??
         throw new InvalidOperationException("Supabase AnonKey not configured")
     ));
+
+// Cliente Firebase
+builder.Services.AddScoped(provider =>
+{
+    var firebaseUrl = builder.Configuration["Firebase:RealtimeDatabaseUrl"]
+        ?? throw new InvalidOperationException("Firebase RealtimeDatabaseUrl not configured");
+    return new FirebaseClient(firebaseUrl);
+});
 
 // Repositorios
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
