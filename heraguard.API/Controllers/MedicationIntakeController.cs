@@ -1,4 +1,5 @@
 using heraguard.Application.Notifications.Commands;
+using heraguard.Application.Notifications.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,6 +51,19 @@ public class MedicationIntakeController : BaseController
 
         return HandleErrorResult(result);
     }
+    
+    [HttpGet("{scheduleId}")]
+    public async Task<IActionResult> GetMedicationIntakeById(Guid scheduleId)
+    {
+        var query = new GetMedicationIntakeByIdQuery(scheduleId); 
+        var result = await _mediator.Send(query);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return HandleErrorResult(result);
+    }
+
 }
 
 public record ConfirmIntakeRequest(

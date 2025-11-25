@@ -47,4 +47,11 @@ public class MedicationScheduleRepository : IMedicationScheduleRepository
         return await _context.MedicationSchedules
             .CountAsync(s => s.MedicationId == medicationId && s.Status == "pending");
     }
+    
+    public async Task<MedicationSchedule?> GetWithMedicationByIdAsync(Guid scheduleId)
+    {
+        return await _context.MedicationSchedules
+            .Include(s => s.Medication)
+            .FirstOrDefaultAsync(s => s.Id == scheduleId);
+    }
 }
