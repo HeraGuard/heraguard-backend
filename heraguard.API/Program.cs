@@ -68,25 +68,19 @@ builder.Services.AddScoped<IMedicationScheduleRepository, MedicationScheduleRepo
 builder.Services.AddScoped<IMedicationIntakeLogRepository, MedicationIntakeLogRepository>();
 builder.Services.AddScoped<ICaregiverAlertRepository, CaregiverAlertRepository>();
 
-var firebaseCredPath = Path.Combine(
-    builder.Environment.ContentRootPath,
-    "Configuration",
-    "firebase-credentials.json"
-);
-
-
-
-if (File.Exists(firebaseCredPath))
+var firebaseJson = builder.Configuration["Firebase:ConfigJson"];
+if (!string.IsNullOrEmpty(firebaseJson))
 {
-    FirebaseApp.Create(new AppOptions
+    var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(firebaseJson));
+    var options = new AppOptions
     {
-        Credential = GoogleCredential.FromFile(firebaseCredPath),
-        ProjectId = "heraguard-9b1a0"
-    });
+        Credential = GoogleCredential.FromStream(stream)
+    };
+    FirebaseApp.Create(options);
 }
 else
 {
-    Console.WriteLine($"⚠️ Advertencia: No se encontró firebase-credentials.json en {firebaseCredPath}");
+    Console.WriteLine("⚠️ No se encontró el secreto Firebase:ConfigJson");
 }
 
 builder.Services.AddHangfire(config =>
