@@ -9,4 +9,6 @@ public interface IMedicationScheduleRepository
     Task AddAsync(MedicationSchedule schedule);
     Task UpdateAsync(MedicationSchedule schedule);
     Task<int> CountPendingByMedicationAsync(Guid medicationId);
+    Task<MedicationSchedule?> GetWithMedicationByIdAsync(Guid scheduleId);
+
 }
