@@ -20,6 +20,8 @@ using heraguard.Infrastructure.Repositories;
 using heraguard.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Supabase;
+using heraguard.Application.Chat.Interfaces;
+using Firebase.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +55,14 @@ builder.Services.AddScoped(provider =>
         throw new InvalidOperationException("Supabase AnonKey not configured")
     ));
 
+// Cliente Firebase
+builder.Services.AddScoped(provider =>
+{
+    var firebaseUrl = builder.Configuration["Firebase:RealtimeDatabaseUrl"]
+        ?? throw new InvalidOperationException("Firebase RealtimeDatabaseUrl not configured");
+    return new FirebaseClient(firebaseUrl);
+});
+
 // Repositorios
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -61,7 +71,8 @@ builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IMedicalAppointmentRepository, MedicalAppointmentRepository>();
 builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 builder.Services.AddScoped<IRelationshipRepository, RelationshipRepository>();
-builder.Services.AddScoped<IUserRepository,  UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IChatRepository, FirebaseChatRepository>();
 
 builder.Services.AddScoped<IUserDeviceTokenRepository, UserDeviceTokenRepository>();
 builder.Services.AddScoped<IMedicationScheduleRepository, MedicationScheduleRepository>();
