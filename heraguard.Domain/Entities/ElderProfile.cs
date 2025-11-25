@@ -9,6 +9,9 @@ public class ElderProfile
     public string EmergencyContact { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public string LinkingCode { get; private set; } = string.Empty;
+    
+    // Para las alarmas fuertes
+    public bool EnableCriticalAlerts { get; set; } = true; 
 
     public void GenerateLinkingCode()
     {

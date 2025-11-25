@@ -1,3 +1,7 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Hangfire;
+using Hangfire.PostgreSql;
 using heraguard.API.Middleware;
 using heraguard.Application.Activities.Interfaces;
 using heraguard.Application.Auth.Commands;
@@ -6,11 +10,14 @@ using heraguard.Application.Auth.Services;
 using heraguard.Application.Mapping;
 using heraguard.Application.Medications.Interfaces;
 using heraguard.Application.MedicalAppointments.Interfaces;
+using heraguard.Application.Notifications.Interfaces;
 using heraguard.Application.Prescriptions.Interfaces;
 using heraguard.Application.Relationships.Interfaces;
 using heraguard.Application.Users.Interfaces;
+using heraguard.Infrastructure.BackgroundJobs;
 using heraguard.Infrastructure.Data;
 using heraguard.Infrastructure.Repositories;
+using heraguard.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Supabase;
 using heraguard.Application.Chat.Interfaces;
@@ -67,6 +74,36 @@ builder.Services.AddScoped<IRelationshipRepository, RelationshipRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IChatRepository, FirebaseChatRepository>();
 
+builder.Services.AddScoped<IUserDeviceTokenRepository, UserDeviceTokenRepository>();
+builder.Services.AddScoped<IMedicationScheduleRepository, MedicationScheduleRepository>();
+builder.Services.AddScoped<IMedicationIntakeLogRepository, MedicationIntakeLogRepository>();
+builder.Services.AddScoped<ICaregiverAlertRepository, CaregiverAlertRepository>();
+
+var firebaseJson = builder.Configuration["Firebase:ConfigJson"];
+if (!string.IsNullOrEmpty(firebaseJson))
+{
+    var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(firebaseJson));
+    var options = new AppOptions
+    {
+        Credential = GoogleCredential.FromStream(stream)
+    };
+    FirebaseApp.Create(options);
+}
+else
+{
+    Console.WriteLine("⚠️ No se encontró el secreto Firebase:ConfigJson");
+}
+
+builder.Services.AddHangfire(config =>
+    config.UsePostgreSqlStorage(options =>
+        options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("HeraGuardConnection"))
+    )
+);
+builder.Services.AddHangfireServer();
+
+builder.Services.AddScoped<IBackgroundJobScheduler, HangfireJobScheduler>();
+builder.Services.AddScoped<INotificationService, FirebaseNotificationService>();
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -89,6 +126,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseCors("AllowAll");
+
+app.UseHangfireDashboard("/hangfire");
+
 app.UseAuthorization();
 app.MapControllers();
 

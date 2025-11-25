@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.14" />
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
@@ -25,6 +27,10 @@
     <ProjectReference Include="..\heraguard.Application\heraguard.Application.csproj" />
     <ProjectReference Include="..\heraguard.Domain\heraguard.Domain.csproj" />
     <ProjectReference Include="..\heraguard.Infrastructure\heraguard.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Configuration\" />
   </ItemGroup>
 
 </Project>

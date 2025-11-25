@@ -20,6 +20,11 @@ public class HeraGuardDbContext : DbContext
     public DbSet<MedicalAppointment> MedicalAppointments => Set<MedicalAppointment>();
     public DbSet<Prescription> Prescriptions => Set<Prescription>();
     public DbSet<Relationship> Relationships => Set<Relationship>();
+    
+    public DbSet<UserDeviceToken> UserDeviceTokens => Set<UserDeviceToken>();
+    public DbSet<MedicationSchedule> MedicationSchedules => Set<MedicationSchedule>();
+    public DbSet<MedicationIntakeLog> MedicationIntakeLogs => Set<MedicationIntakeLog>();
+    public DbSet<CaregiverAlert> CaregiverAlerts => Set<CaregiverAlert>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -152,6 +157,95 @@ public class HeraGuardDbContext : DbContext
             .WithMany()
             .HasForeignKey(r => r.RelatedUserId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        // UserDeviceToken
+        modelBuilder.Entity<UserDeviceToken>()
+            .HasKey(t => t.Id);
+
+        modelBuilder.Entity<UserDeviceToken>()
+            .HasOne(t => t.User)
+            .WithMany()
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserDeviceToken>()
+            .HasIndex(t => t.UserId);
+
+        // MedicationSchedule
+        modelBuilder.Entity<MedicationSchedule>()
+            .HasKey(s => s.Id);
+
+        modelBuilder.Entity<MedicationSchedule>()
+            .HasOne(s => s.Medication)
+            .WithMany()
+            .HasForeignKey(s => s.MedicationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MedicationSchedule>()
+            .HasOne(s => s.Elder)
+            .WithMany()
+            .HasForeignKey(s => s.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicationSchedule>()
+            .HasIndex(s => new { s.MedicationId, s.Status });
+
+        // MedicationIntakeLog
+        modelBuilder.Entity<MedicationIntakeLog>()
+            .HasKey(l => l.Id);
+
+        modelBuilder.Entity<MedicationIntakeLog>()
+            .HasOne(l => l.Schedule)
+            .WithMany()
+            .HasForeignKey(l => l.MedicationScheduleId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicationIntakeLog>()
+            .HasOne(l => l.Medication)
+            .WithMany()
+            .HasForeignKey(l => l.MedicationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicationIntakeLog>()
+            .HasOne(l => l.Elder)
+            .WithMany()
+            .HasForeignKey(l => l.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicationIntakeLog>()
+            .HasOne(l => l.ConfirmedBy)
+            .WithMany()
+            .HasForeignKey(l => l.ConfirmedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<MedicationIntakeLog>()
+            .HasIndex(l => l.ElderId);
+
+        // CaregiverAlert
+        modelBuilder.Entity<CaregiverAlert>()
+            .HasKey(a => a.Id);
+
+        modelBuilder.Entity<CaregiverAlert>()
+            .HasOne(a => a.Caregiver)
+            .WithMany()
+            .HasForeignKey(a => a.CaregiverId)
+            .HasPrincipalKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CaregiverAlert>()
+            .HasOne(a => a.Elder)
+            .WithMany()
+            .HasForeignKey(a => a.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CaregiverAlert>()
+            .HasOne(a => a.Medication)
+            .WithMany()
+            .HasForeignKey(a => a.MedicationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<CaregiverAlert>()
+            .HasIndex(a => new { a.CaregiverId, a.IsRead });
 
     }
 }
