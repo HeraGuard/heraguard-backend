@@ -3,6 +3,13 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+## firebase
+Configuration/*.json
+# Firebase credentials
+heraguard.API/Configuration/firebase-credentials.json
+heraguard.API/Configuration/firebase-credentials-fixed.json
+
+
 # dotenv files
 .env
 
