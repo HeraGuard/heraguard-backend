@@ -7,4 +7,6 @@ public interface INotificationService
     Task SendCriticalAlertAsync(Guid scheduleId);
     Task NotifyCaregiversAsync(Guid elderId, Guid medicationId, string message);
     Task SendTestNotificationAsync(string fcmToken);
+    Task SendSosAlertAsync(Guid elderId, Guid sosId);
+
 }

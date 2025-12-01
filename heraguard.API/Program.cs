@@ -22,6 +22,7 @@ using Microsoft.EntityFrameworkCore;
 using Supabase;
 using heraguard.Application.Chat.Interfaces;
 using Firebase.Database;
+using heraguard.Application.Sos.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,7 @@ builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(MedicationProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(PrescriptionProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(RelationshipProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(SosProfile).Assembly);
 
 // MediatR
 builder.Services.AddMediatR(cfg =>
@@ -78,6 +80,8 @@ builder.Services.AddScoped<IUserDeviceTokenRepository, UserDeviceTokenRepository
 builder.Services.AddScoped<IMedicationScheduleRepository, MedicationScheduleRepository>();
 builder.Services.AddScoped<IMedicationIntakeLogRepository, MedicationIntakeLogRepository>();
 builder.Services.AddScoped<ICaregiverAlertRepository, CaregiverAlertRepository>();
+builder.Services.AddScoped<ISosEventRepository, SosEventRepository>();
+
 
 var firebaseJson = builder.Configuration["Firebase:ConfigJson"];
 if (!string.IsNullOrEmpty(firebaseJson))
