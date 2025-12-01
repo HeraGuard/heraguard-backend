@@ -393,4 +393,72 @@ public class FirebaseNotificationService : INotificationService
             }
         }
     }
+    
+    public async Task SendSosAlertAsync(Guid elderId, Guid sosId)
+    {
+    var caregiverRelationships = await _context.Relationships
+        .Where(r => r.ElderId == elderId && r.RelationshipTypeId == 2) 
+        .ToListAsync();
+
+    if (!caregiverRelationships.Any())
+    {
+        Console.WriteLine($"[SOS] No hay cuidadores para elder {elderId}");
+        return;
+    }
+
+    var elderProfile = await _context.Elders
+        .Include(e => e.User)
+        .FirstOrDefaultAsync(e => e.UserId == elderId);
+
+    var elderName = elderProfile?.User?.Name ?? "tu paciente";
+
+    foreach (var relationship in caregiverRelationships)
+    {
+        var caregiverId = relationship.RelatedUserId;
+        var tokens = await _tokenRepository.GetDeviceTokensByUserIdAsync(caregiverId);
+
+        if (!tokens.Any())
+            continue;
+        
+        
+        Console.WriteLine($"[SOS] Tokens cuidador {caregiverId}: {string.Join(",", tokens)}");
+
+        try
+        {
+            var message = new Message
+            {
+                Token = tokens.First(),
+                Notification = new Notification
+                {
+                    Title = $"🚨 SOS de {elderName}",
+                    Body = "El paciente ha presionado el botón de emergencia."
+                },
+                Data = new Dictionary<string, string>
+                {
+                    { "type", "sos" },
+                    { "sosId", sosId.ToString() },
+                    { "elderId", elderId.ToString() }
+                },
+                Android = new AndroidConfig
+                {
+                    Priority = Priority.High,
+                    Notification = new AndroidNotification
+                    {
+                        Sound = "default",
+                        ChannelId = "sos_alerts",
+                        ClickAction = "FLUTTER_NOTIFICATION_CLICK"
+                    }
+                }
+            };
+
+            var response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+            Console.WriteLine($"[SOS] FCM Response: {response}");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[SOS] Error enviando SOS a cuidador {relationship.RelatedUserId}: {ex.Message}");
+        }
+    }
+}
 }

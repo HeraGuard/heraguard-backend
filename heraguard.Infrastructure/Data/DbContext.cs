@@ -25,6 +25,8 @@ public class HeraGuardDbContext : DbContext
     public DbSet<MedicationSchedule> MedicationSchedules => Set<MedicationSchedule>();
     public DbSet<MedicationIntakeLog> MedicationIntakeLogs => Set<MedicationIntakeLog>();
     public DbSet<CaregiverAlert> CaregiverAlerts => Set<CaregiverAlert>();
+    public DbSet<SosEvent> SosEvents => Set<SosEvent>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -246,6 +248,21 @@ public class HeraGuardDbContext : DbContext
 
         modelBuilder.Entity<CaregiverAlert>()
             .HasIndex(a => new { a.CaregiverId, a.IsRead });
+        
+        // SosEvent
+        modelBuilder.Entity<SosEvent>()
+            .HasKey(s => s.Id);
+
+        modelBuilder.Entity<SosEvent>()
+            .HasOne(s => s.Elder)
+            .WithMany()
+            .HasForeignKey(s => s.ElderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<SosEvent>()
+            .Property(s => s.CreatedAt)
+            .HasDefaultValueSql("NOW()"); 
+
 
     }
 }
